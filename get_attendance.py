@@ -3,7 +3,7 @@ from datetime import datetime
 from connect_database import execute_query
 from uitls import format_date, format_datetime, round_time
 
-DATABASE_PATH = "data/attendance.db"
+
 
 
 def get_attendance(empylee_code, date):
@@ -32,35 +32,37 @@ def get_attendance(empylee_code, date):
                         actions.Id
                 """.format(empylee_code=empylee_code.lower(), date=date)
 
-    result = execute_query(databse_path=DATABASE_PATH, sql_query=sql_query)
+    result_set = execute_query(sql_query)
 
-    attended =  0 < len(result)
+    result_set_len = len(result_set)
  
-    if not attended:   
-        return {ATTENDED_TEXT: attended, DURATION_TEXT: '00:00'}
+    if result_set_len == 0:   
+        return {ATTENDED_TEXT: False, DURATION_TEXT: '00:00'}
 
     total_hour_per_day = datetime.min
 
     CHECK_IN_STATE = 'checkin'
 
-    last_row_index = len(result) - 1
+    last_row_index = result_set_len - 1
     checkin_date = None
 
-    for index, row in enumerate(result):
+    for index, row in enumerate(result_set):
         action_time, action = row
 
         action_time = format_datetime(action_time)
 
         if action.lower() == CHECK_IN_STATE:
             checkin_date = action_time
+            is_last_action_check_in = index == last_row_index
 
-            if index == last_row_index:
+            if is_last_action_check_in:
                 day_midnight_time = datetime.combine(action_time, datetime.max.time())
                 total_hour_per_day +=  day_midnight_time - action_time
 
         else:
+            is_check_in_before_check_out = checkin_date is not None
 
-            if checkin_date is not None:
+            if is_check_in_before_check_out:
                 total_hour_per_day += action_time - checkin_date
             else:
                 day_start_time = datetime.combine(action_time, datetime.min.time())
@@ -72,4 +74,4 @@ def get_attendance(empylee_code, date):
         return {ATTENDED_TEXT: False, DURATION_TEXT: '00:00'}
 
     duration =  '{h:02d}:{m:02d}'.format(h=result.hour, m=result.minute)
-    return { ATTENDED_TEXT: attended, DURATION_TEXT: duration }
+    return { ATTENDED_TEXT: True, DURATION_TEXT: duration }

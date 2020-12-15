@@ -2,10 +2,11 @@ from contextlib import closing
 
 import sqlite3
 
+DATABASE_PATH = "data/attendance.db"
 
-def execute_query(databse_path, sql_query):
+def execute_query(sql_query):
 
-    with sqlite3.connect(databse_path) as con:
+    with sqlite3.connect(DATABASE_PATH) as con:
 
         with closing(con.cursor()) as cur:
             cur.execute(sql_query)

@@ -3,7 +3,6 @@ import json
 from connect_database import execute_query
 from uitls import datetime_utc_format, format_date, format_datetime
 
-DATABASE_PATH = "data/attendance.db"
 
 def get_attendance_history(empylee_code):
 
@@ -21,7 +20,7 @@ def get_attendance_history(empylee_code):
 	                actions.Id  
             """.format(empylee_code=empylee_code.lower())
     
-    result = execute_query(databse_path=DATABASE_PATH, sql_query=sql_query)
+    result = execute_query(sql_query)
 
     days = []
     days_set = sorted(set([day for day, _, _ in result]))
