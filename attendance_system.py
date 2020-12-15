@@ -1,5 +1,5 @@
-from get_attendance import get_attendance
-from get_attendance_history import get_attendance_history
+from attendance_sheet import get_attendance
+from attendance_history import get_attendance_history
 
 
 if __name__ == "__main__":

@@ -1,9 +1,7 @@
 from datetime import datetime
 
-from connect_database import execute_query
+from db_context import execute_query
 from uitls import format_date, format_datetime, round_time
-
-
 
 
 def get_attendance(empylee_code, date):
